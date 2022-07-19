@@ -10,5 +10,6 @@ COPY ./nginx/nginx.conf /etc/nginx/conf.d/default.conf
 COPY ./html /usr/share/nginx/html
 
 COPY ./create-hash.sh /
+RUN chmod +x /create-hash.sh
 RUN /create-hash.sh
 RUN rm /create-hash.sh
