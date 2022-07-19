@@ -16,8 +16,8 @@ function decodeMessage(message)
 }
 
 copyValueToClipBoard = (eid) => {
-    `\n${window.document.getElementById(eid).value.host}\n`
-    var text = document.getElementById(eid).value;
+    
+    var text = `\n${window.document.getElementById(eid).value}\n`;
     navigator.clipboard.writeText(text).then(() => {
         /* Resolved - text copied to clipboard */
       },
