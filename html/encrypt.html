@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="index.js"></script>
+    <link href="simple.min.css" rel="stylesheet">
+    <title>Share your secret</title>
+</head>
+
+<body>
+    <header>
+        <nav>
+            <a href="/">Home</a>
+            <a href="/encrypt.html">Encrypt</a>
+            <a href="/decrypt.html">Decrypt</a>
+        </nav>
+        <h3 style="margin: 0 auto">Share your Secrets</h1>
+        <p>A simple and secure? way to share secrets</p>
+    </header>
+
+    <main>
+        <h3>Encrypt your secret</h3>
+        <details>
+            <summary>Public Key</summary>
+            <textarea type="text" id="textarea-pubk" placeholder="-----BEGIN PGP PUBLIC KEY BLOCK...."></textarea>
+        </details>
+        <div class="btn-group" role="group">
+            <textarea type="text" id="textarea-message" placeholder="Type your secret"></textarea>
+            <button type="button"
+                onclick="encrypt('textarea-pubk', 'textarea-message', 'textarea-encrypted-message');">Encrypt</button>
+            <button type="button" onclick="copyValueToClipBoard('textarea-encrypted-message');">Copy message</button>
+            <textarea readonly type="text" id="textarea-encrypted-message" placeholder="..."></textarea>
+        </div>
+    </main>
+    <footer>
+        <p>Share your secret was created by sebb.</p>
+    </footer>
+    <script src="openpgp.min.js"></script>
+</body>
+
+</html>
