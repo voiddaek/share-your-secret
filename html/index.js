@@ -1,23 +1,29 @@
 const passphrase = `share your secret passphrase or not whatever`;
+const urlParamName = `p`;
 
 function clearElementById(id)
 {
     document.getElementById(id).value='';
 };
 
+function getBaseURL()
+{
+    return `${window.location.protocol}//${window.location.host}/encrypt.html?${urlParamName}=`;
+}
+
 function encodeMessage(message)
 {
-    return atob(message);
+    return btoa(message.trim()).trim();
 }
 
 function decodeMessage(message)
 {
-    return btoa(message);
+    return atob(message.trim()).trim();
 }
 
 copyValueToClipBoard = (eid) => {
     
-    var text = `\n${window.document.getElementById(eid).value}\n`;
+    var text = `${window.document.getElementById(eid).value}`;
     navigator.clipboard.writeText(text).then(() => {
         /* Resolved - text copied to clipboard */
       },
@@ -35,8 +41,8 @@ generateURL = async (pkid, urlid, qrcodeid) => {
     const privateKeyArmored = keys.privateKey.trim();
     document.getElementById(pkid).value = privateKeyArmored;
 
-    const encodedPublicKey = encodeURIComponent(btoa(publicKeyArmored));
-    const url = `${window.location.protocol}//${window.location.host}/encrypt.html?b64pubk=${encodedPublicKey}`;
+    const encodedPublicKey = encodeURIComponent(encodeMessage(publicKeyArmored));
+    const url = `${getBaseURL()}${encodedPublicKey}`;
     document.getElementById(urlid).value = url;
     // var qrcode = new QRCode(document.getElementById(qrcodeid), {
     //     text: url,
@@ -51,10 +57,10 @@ generateURL = async (pkid, urlid, qrcodeid) => {
 encrypt = async (pubkid, mid, emid) => {
     const queryString = window.location.search;
     const urlParams = new URLSearchParams(queryString);
-    const b64pubk = urlParams.get("b64pubk");
-    const publicKeyArmored = atob(b64pubk).trim();
+    const b64pubk = urlParams.get(urlParamName);
+    const publicKeyArmored = decodeMessage(b64pubk);
 
-    document.getElementById(pubkid).value = publicKeyArmored.trim();
+    document.getElementById(pubkid).value = publicKeyArmored;
 
     const m = document.getElementById(mid).value.trim();
 
@@ -78,9 +84,7 @@ decrypt = async (pkid, emid, dmid) => {
         passphrase
     });
 
-    const encodedMessage = atob(document.getElementById(emid).value.trim()).trim();
-
-    const encrypted = encodedMessage;
+    const encrypted = decodeMessage(document.getElementById(emid).value);
 
     const message = await openpgp.readMessage({
         armoredMessage: encrypted
