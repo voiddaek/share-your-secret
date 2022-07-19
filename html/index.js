@@ -38,14 +38,14 @@ generateURL = async (pkid, urlid, qrcodeid) => {
     const encodedPublicKey = encodeURIComponent(btoa(publicKeyArmored));
     const url = `${window.location.protocol}//${window.location.host}/encrypt.html?b64pubk=${encodedPublicKey}`;
     document.getElementById(urlid).value = url;
-    var qrcode = new QRCode(document.getElementById(qrcodeid), {
-        text: url,
-        width: 1000,
-        height: 1000,
-        colorDark : "#000000",
-        colorLight : "#ffffff",
-        correctLevel : QRCode.CorrectLevel.H
-    });
+    // var qrcode = new QRCode(document.getElementById(qrcodeid), {
+    //     text: url,
+    //     width: 1000,
+    //     height: 1000,
+    //     colorDark : "#000000",
+    //     colorLight : "#ffffff",
+    //     correctLevel : QRCode.CorrectLevel.H
+    // });
 };
 
 encrypt = async (pubkid, mid, emid) => {
