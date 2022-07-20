@@ -1,6 +1,3 @@
-const PASSPHRASE = `share your secret passphrase or not whatever`;
-const URL_PARAM_NAME = `p`;
-
 let URL_PARAM_PUBK = undefined;
 
 function setUrlParamValue(pubkid)
@@ -19,25 +16,11 @@ function setUrlParamValue(pubkid)
     document.getElementById(pubkid).value = publicKeyArmored;
 }
 
-function clearElementById(id)
-{
-    document.getElementById(id).value='';
+openQrCodeTab = (urlid) => {
+    var qrcodeparam = encodeMessage(`${window.document.getElementById(urlid).value}`);
+    var qrcodeUrl = `${getQrCodeUrl()}${qrcodeparam}`;
+    window.open(qrcodeUrl, '_blank');
 };
-
-function getBaseURL()
-{
-    return `${window.location.protocol}//${window.location.host}/encrypt.html?${URL_PARAM_NAME}=`;
-}
-
-function encodeMessage(message)
-{
-    return btoa(message.trim()).trim();
-}
-
-function decodeMessage(message)
-{
-    return atob(message.trim()).trim();
-}
 
 copyValueToClipBoard = (bid, eid) => {
     var text = `${window.document.getElementById(eid).value}`;
@@ -70,21 +53,12 @@ generateURL = async (pkid, urlid, qrcodeid) => {
     {
         r = r + s + rr.slice(0, step);
         rr = rr.slice(step)
-        console.log(r);
     }
     encodedPublicKey = r;
     
 
-    var url = `${getBaseURL()}${encodedPublicKey}`;
+    var url = `${getEncryptUrl()}${encodedPublicKey}`;
     document.getElementById(urlid).value = url;
-    // var qrcode = new QRCode(document.getElementById(qrcodeid), {
-    //     text: url,
-    //     width: 1000,
-    //     height: 1000,
-    //     colorDark : "#000000",
-    //     colorLight : "#ffffff",
-    //     correctLevel : QRCode.CorrectLevel.H
-    // });
 };
 
 encrypt = async (pubkid, mid, emid) => {

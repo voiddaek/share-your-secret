@@ -5,8 +5,8 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="common.js"></script>
     <script src="index.js"></script>
-    <script src="qrcode.min.js"></script>
     <link href="simple.min.css" rel="stylesheet">
     <title>Share your secret</title>
 </head>
@@ -39,8 +39,8 @@
         <div>
             <button type="button" id="generateURL" onclick="generateURL('textarea-pk', 'textarea-url', 'qrcode');">Generate link</button>
             <button type="button" id="button-cp-url" onclick="copyValueToClipBoard('button-cp-url', 'textarea-url');">Copy link</button>
+            <button type="button" id="button-qrcode" onclick="openQrCodeTab('textarea-url')">QRCODE</button>
             <textarea type="text" readonly id="textarea-url" placeholder="http(s)://something.tld/somewhere/to/encrypt"></textarea>
-            <!-- <div id="qrcode"></div> -->
         </div>
         <h3>Decrypt a secret</h3>
         <div>
