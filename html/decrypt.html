@@ -25,7 +25,7 @@
     <main>
         <h3>Enter your private key</h3>
         <div>
-            <button type="button" onclick="copyValueToClipBoard('textarea-pk');">Copy private key</button>
+            <button type="button" id="button-cp-pk" onclick="copyValueToClipBoard('button-cp-pk', 'textarea-pk');">Copy private key</button>
             <textarea type="text" id="textarea-pk" placeholder="-----BEGIN PGP PRIVATE KEY...."></textarea>
         </div>
         <h3>Decrypt a secret</h3>
@@ -33,7 +33,7 @@
             <textarea type="text" id="textarea-encrypted-message" placeholder="Encrypted message"></textarea>
             <button type="button" id="button-decrypt"
                 onclick="decrypt('textarea-pk', 'textarea-encrypted-message', 'textarea-decrypted-message');">Decrypt</button>
-            <button type="button" onclick="copyValueToClipBoard('textarea-decrypted-message');">Copy message</button>
+            <button type="button" id="button-cp-dm" onclick="copyValueToClipBoard('button-cp-dm', 'textarea-decrypted-message');">Copy message</button>
             <textarea type="text" id="textarea-decrypted-message" placeholder="Decrypted message"></textarea>
         </div>
     </main>

@@ -32,7 +32,7 @@
             <textarea type="text" id="textarea-message" placeholder="Type your secret"></textarea>
             <button type="button"
                 onclick="encrypt('textarea-pubk', 'textarea-message', 'textarea-encrypted-message');">Encrypt</button>
-            <button type="button" onclick="copyValueToClipBoard('textarea-encrypted-message');">Copy message</button>
+            <button type="button" id="button-cp-m" onclick="copyValueToClipBoard('button-cp-m', 'textarea-encrypted-message');">Copy message</button>
             <textarea readonly type="text" id="textarea-encrypted-message" placeholder="..."></textarea>
         </div>
     </main>
@@ -40,6 +40,12 @@
         <p>Share your secret was created by sebb.</p>
         <p><a href="/version.txt">version</a></p>
     </footer>
+    <script>
+        document.body.onload = function()
+        {
+            setUrlParamValue('textarea-pubk');
+        }
+    </script>
     <script src="openpgp.min.js"></script>
 </body>
 

@@ -1,5 +1,23 @@
-const passphrase = `share your secret passphrase or not whatever`;
-const urlParamName = `p`;
+const PASSPHRASE = `share your secret passphrase or not whatever`;
+const URL_PARAM_NAME = `p`;
+
+let URL_PARAM_PUBK = undefined;
+
+function setUrlParamValue(pubkid)
+{
+    var queryString = window.location.search;
+    //Just because I will add some %2F in the link.
+    //when sending the link without those %2F ios fails to create the preview link ...
+    queryString = queryString.replaceAll("%2F", '');
+
+
+    var urlParams = new URLSearchParams(queryString);
+    var b64pubk = urlParams.get(URL_PARAM_NAME);
+
+    var publicKeyArmored = decodeMessage(b64pubk);
+
+    document.getElementById(pubkid).value = publicKeyArmored;
+}
 
 function clearElementById(id)
 {
@@ -8,7 +26,7 @@ function clearElementById(id)
 
 function getBaseURL()
 {
-    return `${window.location.protocol}//${window.location.host}/encrypt.html?${urlParamName}=`;
+    return `${window.location.protocol}//${window.location.host}/encrypt.html?${URL_PARAM_NAME}=`;
 }
 
 function encodeMessage(message)
@@ -21,28 +39,43 @@ function decodeMessage(message)
     return atob(message.trim()).trim();
 }
 
-copyValueToClipBoard = (eid) => {
-    
+copyValueToClipBoard = (bid, eid) => {
     var text = `${window.document.getElementById(eid).value}`;
     navigator.clipboard.writeText(text).then(() => {
-        /* Resolved - text copied to clipboard */
+        let v = document.getElementById(bid).innerHTML;
+        document.getElementById(bid).innerHTML = "Copied!"
+        setTimeout(() => {document.getElementById(bid).innerHTML = v}, 500);
       },
       () => {
-        /* Rejected - clipboard failed */
+        let v = document.getElementById(bid).innerHTML;
+        document.getElementById(bid).innerHTML = "Copy error!"
+        setTimeout(() => {document.getElementById(bid).innerHTML = v}, 500);
       });
 };
 
 generateURL = async (pkid, urlid, qrcodeid) => {
-    const keys = await openpgp.generateKey({userIDs:{name: 'Share your secret'}, passphrase: passphrase});
-
-    const publicKeyArmored = keys.publicKey.trim();
-    // document.getElementById(pubkid).value = publicKeyArmored;
-
-    const privateKeyArmored = keys.privateKey.trim();
+    var keys = await openpgp.generateKey({userIDs:{name: 'Share your secret'}, passphrase: PASSPHRASE});
+    var publicKeyArmored = keys.publicKey.trim();
+    var privateKeyArmored = keys.privateKey.trim();
     document.getElementById(pkid).value = privateKeyArmored;
+    var encodedPublicKey = encodeURIComponent(encodeMessage(publicKeyArmored));
 
-    const encodedPublicKey = encodeURIComponent(encodeMessage(publicKeyArmored));
-    const url = `${getBaseURL()}${encodedPublicKey}`;
+    //Just because I will add some %2F in the link.
+    //when sending the link without those %2F ios fails to create the preview link ...
+    var step = 75;
+    var s = "%2F";
+    var rr = encodedPublicKey;
+    var r = '';
+    while (rr.length > 0)
+    {
+        r = r + s + rr.slice(0, step);
+        rr = rr.slice(step)
+        console.log(r);
+    }
+    encodedPublicKey = r;
+    
+
+    var url = `${getBaseURL()}${encodedPublicKey}`;
     document.getElementById(urlid).value = url;
     // var qrcode = new QRCode(document.getElementById(qrcodeid), {
     //     text: url,
@@ -55,42 +88,36 @@ generateURL = async (pkid, urlid, qrcodeid) => {
 };
 
 encrypt = async (pubkid, mid, emid) => {
-    const queryString = window.location.search;
-    const urlParams = new URLSearchParams(queryString);
-    const b64pubk = urlParams.get(urlParamName);
-    const publicKeyArmored = decodeMessage(b64pubk);
+    var publicKeyArmored = document.getElementById(pubkid).value.trim();
+    var m = document.getElementById(mid).value.trim();
 
-    document.getElementById(pubkid).value = publicKeyArmored;
+    var publicKey = await openpgp.readKey({ armoredKey: publicKeyArmored });
 
-    const m = document.getElementById(mid).value.trim();
-
-    const publicKey = await openpgp.readKey({ armoredKey: publicKeyArmored });
-
-    const encrypted = await openpgp.encrypt({
+    var encrypted = await openpgp.encrypt({
         message: await openpgp.createMessage({ text: m }),
         encryptionKeys: publicKey,
     });
 
-    const encodedMessage = btoa(encrypted.trim());
+    var encodedMessage = btoa(encrypted.trim());
 
     document.getElementById(emid).value = encodedMessage.trim();
 };
 
 decrypt = async (pkid, emid, dmid) => {
-    const privateKeyArmored = document.getElementById(pkid).value.trim();
+    var privateKeyArmored = document.getElementById(pkid).value.trim();
 
-    const privateKey = await openpgp.decryptKey({
+    var privateKey = await openpgp.decryptKey({
         privateKey: await openpgp.readPrivateKey({ armoredKey: privateKeyArmored }),
-        passphrase
+        passphrase: PASSPHRASE
     });
 
-    const encrypted = decodeMessage(document.getElementById(emid).value);
+    var encrypted = decodeMessage(document.getElementById(emid).value);
 
-    const message = await openpgp.readMessage({
+    var message = await openpgp.readMessage({
         armoredMessage: encrypted
     });
 
-    const { data: decrypted } = await openpgp.decrypt({
+    var { data: decrypted } = await openpgp.decrypt({
         message,
         decryptionKeys: privateKey
     });
