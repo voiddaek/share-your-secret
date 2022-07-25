@@ -37,10 +37,18 @@ copyValueToClipBoard = (bid, eid) => {
 };
 
 generateURL = async (pkid, urlid, qrcodeid) => {
-    var keys = await openpgp.generateKey({userIDs:{name: 'Share your secret'}, passphrase: PASSPHRASE});
-    var publicKeyArmored = keys.publicKey.trim();
-    var privateKeyArmored = keys.privateKey.trim();
-    document.getElementById(pkid).value = privateKeyArmored;
+    var privateKeyArmored = document.getElementById(pkid).value;
+    var publicKeyArmored = '';
+    var keys = {};
+    if (privateKeyArmored == "") {
+        keys = await openpgp.generateKey({userIDs:{name: 'Share your secret'}, passphrase: PASSPHRASE});
+        privateKeyArmored = keys.privateKey.trim();
+        document.getElementById(pkid).value = privateKeyArmored;
+        publicKeyArmored = keys.publicKey.trim();
+    } else {
+        keys = await openpgp.readKey({armoredKey: privateKeyArmored});
+        publicKeyArmored = keys.toPublic().armor();
+    }
     var encodedPublicKey = encodeURIComponent(encodeMessage(publicKeyArmored));
 
     //Just because I will add some %2F in the link.
